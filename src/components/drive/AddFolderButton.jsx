@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFolderPlus } from "@fortawesome/free-solid-svg-icons";
-// import { database } from "../../firebase";
-// import { useAuth } from "../../contexts/AuthContext";
+import { collection, doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { database } from "../../firebase";
+import { useAuth } from "../../contexts/AuthContext";
 // import { ROOT_FOLDER } from "../../hooks/useFolder";
 
 export default function AddFolderButton({ currentFolder }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
-  //   const { currentUser } = useAuth();
+  const { currentUser } = useAuth();
 
   function openModal() {
     setOpen(true);
@@ -19,23 +20,31 @@ export default function AddFolderButton({ currentFolder }) {
     setOpen(false);
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
     if (currentFolder == null) return;
 
-    const path = [...currentFolder.path];
-    if (currentFolder !== ROOT_FOLDER) {
-      path.push({ name: currentFolder.name, id: currentFolder.id });
-    }
+    // const path = [...currentFolder.path];
+    // if (currentFolder !== ROOT_FOLDER) {
+    //   path.push({ name: currentFolder.name, id: currentFolder.id });
+    // }
 
-    database.folders.add({
+    // const folderCollection = collection(database, "folders");
+    // const folderPayload = {
+    //   name,
+    //   userId: currentUser.uid,
+    //   timestamp: serverTimestamp(),
+    // };
+
+    await setDoc(doc(collection(database, "folders")), {
       name: name,
       parentId: currentFolder.id,
       userId: currentUser.uid,
-      path: path,
-      createdAt: database.getCurrentTimestamp(),
+      // path,
+      createdAt: serverTimestamp(),
     });
+
     setName("");
     closeModal();
   }

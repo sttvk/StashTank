@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route, Router } from "react-router-dom";
-import { Container } from "react-bootstrap";
 import ProtectedRoute from "./components/authentication/ProtectedRoute";
 import Profile from "./components/authentication/Profile";
 import Login from "./components/authentication/Login";
