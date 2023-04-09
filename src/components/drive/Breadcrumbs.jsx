@@ -1,11 +1,11 @@
 import React from "react";
 import { Breadcrumb } from "react-bootstrap";
 
-export const Breadcrumbs = (currentFolder) => {
+export default function Breadcrumbs({ currentFolder }) {
   return (
     <Breadcrumb
       className="flex-grow-1"
-      listProps={{ className: "bg-white ps-0 m-0" }}
+      listProps={{ className: "bg-white mt-2" }}
     >
       {currentFolder && (
         <Breadcrumb.Item
@@ -18,4 +18,4 @@ export const Breadcrumbs = (currentFolder) => {
       )}
     </Breadcrumb>
   );
-};
+}
