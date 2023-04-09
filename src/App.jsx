@@ -11,6 +11,15 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route
+          exact
+          path="/folder/:folderId"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/"
           element={
             <ProtectedRoute>
