@@ -5,7 +5,7 @@ import { faFolderPlus } from "@fortawesome/free-solid-svg-icons";
 import { collection, doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { database } from "../../firebase";
 import { useAuth } from "../../contexts/AuthContext";
-// import { ROOT_FOLDER } from "../../hooks/useFolder";
+import { ROOT_FOLDER } from "../../hooks/useFolder";
 
 export default function AddFolderButton({ currentFolder }) {
   const [open, setOpen] = useState(false);
@@ -25,10 +25,10 @@ export default function AddFolderButton({ currentFolder }) {
 
     if (currentFolder == null) return;
 
-    // const path = [...currentFolder.path];
-    // if (currentFolder !== ROOT_FOLDER) {
-    //   path.push({ name: currentFolder.name, id: currentFolder.id });
-    // }
+    const path = [...currentFolder.path];
+    if (currentFolder !== ROOT_FOLDER) {
+      path.push({ name: currentFolder.name, id: currentFolder.id });
+    }
 
     // const folderCollection = collection(database, "folders");
     // const folderPayload = {
@@ -41,7 +41,7 @@ export default function AddFolderButton({ currentFolder }) {
       name: name,
       parentId: currentFolder.id,
       userId: currentUser.uid,
-      // path,
+      path,
       createdAt: serverTimestamp(),
     });
 
