@@ -15,6 +15,7 @@ const ACTIONS = {
   SELECT_FOLDER: "select-folder",
   UPDATE_FOLDER: "update-folder",
   SET_CHILD_FOLDERS: "set-child-folders",
+  SET_CHILD_FILES: "set-child-files",
 };
 
 export const ROOT_FOLDER = { name: "Root", id: null, path: [] };
@@ -28,17 +29,20 @@ function reducer(state, { type, payload }) {
         childFolders: [],
         childFiles: [],
       };
-
     case ACTIONS.UPDATE_FOLDER:
       return {
         ...state,
         folder: payload.folder,
       };
-
     case ACTIONS.SET_CHILD_FOLDERS:
       return {
         ...state,
         childFolders: payload.childFolders,
+      };
+    case ACTIONS.SET_CHILD_FILES:
+      return {
+        ...state,
+        childFiles: payload.childFiles,
       };
 
     default:
@@ -105,6 +109,28 @@ export function useFolder(folderId = null, folder = null) {
       dispatch({
         type: ACTIONS.SET_CHILD_FOLDERS,
         payload: { childFolders: qrySnapshot.docs.map(formatDoc) },
+      });
+    });
+
+    return unsubscribe;
+  }, [folderId, currentUser]);
+
+  useEffect(() => {
+    function formatDoc(doc) {
+      return { id: doc.id, ...doc.data() };
+    }
+
+    const qry = query(
+      collection(database, "files"),
+      where("folderId", "==", folderId),
+      where("userId", "==", currentUser.uid),
+      orderBy("createdAt")
+    );
+
+    const unsubscribe = onSnapshot(qry, (qrySnapshot) => {
+      dispatch({
+        type: ACTIONS.SET_CHILD_FILES,
+        payload: { childFiles: qrySnapshot.docs.map(formatDoc) },
       });
     });
 

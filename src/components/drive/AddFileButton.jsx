@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAuth } from "../../contexts/AuthContext";
 import { database, storage } from "../../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { collection, doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { ROOT_FOLDER } from "../../hooks/useFolder";
 
 export default function AddFileButton({ currentFolder }) {
@@ -30,8 +31,14 @@ export default function AddFileButton({ currentFolder }) {
         console.log(err);
       },
       () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-          console.log("File available at", url);
+        getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
+          await setDoc(doc(collection(database, "files")), {
+            url: url,
+            name: file.name,
+            folderId: currentFolder.id,
+            userId: currentUser.uid,
+            createdAt: serverTimestamp(),
+          });
         });
       }
     );
